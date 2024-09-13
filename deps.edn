@@ -1,5 +1,5 @@
 {:paths     ["src"]
- :deps      {com.github.achengs/brimley {:git/tag "v0.0.0-alpha" :git/sha "a03fc00"}}
+ :deps      {com.github.achengs/brimley {:mvn/version "0.1.0-2"}}
  :main-opts ["-m" "brimley-demo.core"]
  :aliases   {:dev {;; for disabling the official compiler
                    ;; :classpath-overrides {org.clojure/clojure nil}
