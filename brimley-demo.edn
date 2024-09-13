@@ -3,6 +3,7 @@
  ;; if the user hits Enter by itself, show the choices available at the current path.
  ;; if the user enters a single backslash, go back up the menu tree one level if possible.
  ;; if the user enters 2 backslashes, toggle between expert mode and novice mode.
+ ;; if the user enters !, then pretty-print the context atom.
  ""     brimley.tasks/show-choices
  "\\"   brimley.tasks/back-one!
  "\\\\" brimley.tasks/toggle-mode!
