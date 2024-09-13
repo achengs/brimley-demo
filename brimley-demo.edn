@@ -1,0 +1,48 @@
+[
+ ;; examples of options that are hidden but available at every path in the menu tree:
+ ;; if the user hits Enter by itself, show the choices available at the current path.
+ ;; if the user enters a single backslash, go back up the menu tree one level if possible.
+ ;; if the user enters 2 backslashes, toggle between expert mode and novice mode.
+ ""     brimley.tasks/show-choices
+ "\\"   brimley.tasks/back-one!
+ "\\\\" brimley.tasks/toggle-mode!
+ "!"    brimley-demo.core/show-context-atom
+
+ ;; here's two menu options at the root path of the menu.
+ ;; Brimley passes a single argument in both cases, which is the value at path [:state]
+ ;; inside the map that is the content of the context atom.
+ ;; in this case, that value is itself an atom, which allows the functions called
+ ;; to update program state. the value doesn't have to be an atom but is in this case.
+ "n" ["Specify name" brimley-demo.core/specify-name [[:subst :state]]]
+ "a" ["Specify age"  brimley-demo.core/specify-age  [[:subst :state]]]
+
+ ;; here's an example of a submenu. you can have deeper submenus ...
+ ;; but top-level menu options are quickest for your expert users.
+ "env"
+ ["Environment"
+  ;; these next 2 menu options pass the value from path [:env] which is another atom:
+  ["d" ["use dev"  brimley-demo.core/set-env  ["dev"  [:subst :env]]]
+   "p" ["use prod" brimley-demo.core/set-env  ["prod" [:subst :env]]]
+   ;; this menu option's target function `show-env` only needs a string value to display
+   ;; instead of the atom, so this tells Brimley to `:deref` the value before passing it:
+   "." ["show"     brimley-demo.core/show-env [[:deref :env]]]]]
+
+ ;; here, Brimley is told to pass 3 arguments to the target function `show-summary`:
+ ;; the first argument shows literal values can be hard-coded in the configuration.edn
+ ;; to be passed as arguments. you can hard-code numbers, vectors, lists, etc.
+ ;; the second argument is like the example above where `show-env` is called.
+ ;; the third argument is a map:
+ ;; the first kv pair in the map show you can pass hard-coded values inside maps.
+ ;; the second kv pair shows the path Brimley stores the last result of the previous
+ ;; action so you can refer to it in the next action call `[:brimley :last-result]`
+ ;; the last kv pair tells Brimley to reach inside the context atom, go to a path
+ ;; (here `[:state]`), take the value at that path to be another atom, and reach
+ ;; inside it at another path (here `[:name]`) and return that value.
+ "s" ["Show everything" brimley-demo.core/show-summary
+      ["the first argument configured to be passed to show-summary"
+       [:deref :env]
+       {:literal 42
+        :last    [:subst :brimley :last-result]
+        :person  {:name [:dref2 [:state] [:name]]
+                  :age  [:dref2 [:state] [:age]]}}]]
+ ]
